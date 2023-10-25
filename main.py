@@ -16,6 +16,9 @@ ui_lap_0 = load_image('UI_Lap0.png')
 ui_lap_1 = load_image('UI_Lap1.png')
 ui_lap_2 = load_image('UI_Lap2.png')
 
-
-
-
+while(True):
+    clear_canvas()
+    map.draw_now(WIDTH//2, HEIGHT//2)
+    player.draw_now(WIDTH//2, HEIGHT//2, 80, 50) # 원본 크기 변경하여 적용
+    update_canvas()
+    delay(0.1)
