@@ -17,16 +17,21 @@ ui_lap_0 = load_image('UI_Lap0.png')
 ui_lap_1 = load_image('UI_Lap1.png')
 ui_lap_2 = load_image('UI_Lap2.png')
 
-idle, move = True, False
+idle, move, on_break = True, False, False
 dir, dir_y = 0,0
 player_x, player_y = WIDTH//2, HEIGHT//2
 speed, speed_limit = 0, 10
-accel, accel_break = 0.1, 0.1
+accel, accel_break, break_abs = 0.5, 0.5, 0
+
 
 def speed_down():
     global speed, accel_break
     if speed > 0:
         speed -= accel_break
+        delay(0.01)
+        if speed < 0:
+            speed = 0
+            move = False
 
 def speed_up():
     global speed, accel
@@ -54,30 +59,31 @@ def move_event():
                 idle = False
                 move = True
                 dir_y += 1
+                speed_up()
             elif event.key == SDLK_s:
                 idle = False
                 move = True
                 dir_y -= 1
-                speed -= accel_break
+                speed_down()
         elif event.type == SDL_KEYUP:
             if event.key == SDLK_a:
                 idle = True
                 move = False
-                dir += 0
+                dir += 1
             elif event.key == SDLK_d:
                 idle = True
                 move = False
-                dir -= 0
+                dir -= 1
             elif event.key == SDLK_w:
                 idle = True
                 move = False
+                on_break = True
                 dir_y -= 1
-                speed_down()
             elif event.key == SDLK_s:
                 idle = True
                 move = False
                 dir_y += 1
-
+                speed_down()
 
 
 while(True):
@@ -89,9 +95,19 @@ while(True):
         ui_lap.draw_now(250, HEIGHT-50)
         ui_lap_0.draw_now(360, HEIGHT-50)
         player.draw_now(player_x, player_y, 80, 50) # 원본 크기 변경하여 적용
+        player_x += dir*3
+        player_y += dir_y*3 + speed
         update_canvas()
         move_event()
-        speed_down()
+        if on_break:
+            break_abs += 1
+            if break_abs > 10:
+                on_break = False
+                break_abs = 0
+            else:
+                while 10:
+                    speed_down()
+                    delay(0.01)
         delay(0.05)
 
     while move:
@@ -102,9 +118,8 @@ while(True):
         ui_lap.draw_now(250, HEIGHT - 50)
         ui_lap_0.draw_now(360, HEIGHT - 50)
         player.draw_now(player_x, player_y, 80, 50)  # 원본 크기 변경하여 적용
+        player_x += dir * 3
+        player_y += dir_y * 3 + speed
         update_canvas()
         move_event()
-        speed_down()
-        player_x += dir*3 + speed
-        player_y += dir_y*3 + speed
         delay(0.05)
