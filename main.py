@@ -1,4 +1,5 @@
 from pico2d import *
+import sdl2
 
 WIDTH, HEIGHT = 1280, 720
 open_canvas(WIDTH, HEIGHT)
@@ -19,49 +20,64 @@ ui_lap_2 = load_image('UI_Lap2.png')
 idle, move = True, False
 dir, dir_y = 0,0
 player_x, player_y = WIDTH//2, HEIGHT//2
+speed, speed_limit = 0, 10
+accel, accel_break = 0.1, 0.1
 
+def speed_down():
+    global speed, accel_break
+    if speed > 0:
+        speed -= accel_break
+
+def speed_up():
+    global speed, accel
+    if speed < speed_limit:
+        speed += accel
 
 def move_event():
     global idle, move, dir, dir_y
+    global speed, accel
 
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:
             move = False
         elif event.type == SDL_KEYDOWN:
-            if event.key == SDLK_LEFT:
+            if event.key == SDLK_a:
                 idle = False
                 move = True
                 dir -= 1
-            elif event.key == SDLK_RIGHT:
+            elif event.key == SDLK_d:
                 idle = False
                 move = True
                 dir += 1
-            elif event.key == SDLK_UP:
+            elif event.key == SDLK_w:
                 idle = False
                 move = True
                 dir_y += 1
-            elif event.key == SDLK_DOWN:
+            elif event.key == SDLK_s:
                 idle = False
                 move = True
                 dir_y -= 1
+                speed -= accel_break
         elif event.type == SDL_KEYUP:
-            if event.key == SDLK_LEFT:
+            if event.key == SDLK_a:
                 idle = True
                 move = False
-                dir += 1
-            elif event.key == SDLK_RIGHT:
+                dir += 0
+            elif event.key == SDLK_d:
                 idle = True
                 move = False
-                dir -= 1
-            elif event.key == SDLK_UP:
+                dir -= 0
+            elif event.key == SDLK_w:
                 idle = True
                 move = False
                 dir_y -= 1
-            elif event.key == SDLK_DOWN:
+                speed_down()
+            elif event.key == SDLK_s:
                 idle = True
                 move = False
                 dir_y += 1
+
 
 
 while(True):
@@ -75,7 +91,8 @@ while(True):
         player.draw_now(player_x, player_y, 80, 50) # 원본 크기 변경하여 적용
         update_canvas()
         move_event()
-        delay(0.1)
+        speed_down()
+        delay(0.05)
 
     while move:
         clear_canvas()
@@ -87,6 +104,7 @@ while(True):
         player.draw_now(player_x, player_y, 80, 50)  # 원본 크기 변경하여 적용
         update_canvas()
         move_event()
-        player_x += dir*5
-        player_y += dir_y*5
-        delay(0.1)
+        speed_down()
+        player_x += dir*3 + speed
+        player_y += dir_y*3 + speed
+        delay(0.05)
