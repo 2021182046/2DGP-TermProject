@@ -32,7 +32,7 @@ class Car:
         self.rotation_angle = 0
         self.rotation = rotation
 
-    def rotate(self, left, right):
+    def rotate(self):
         if left:
             self.rotation_angle += self.rotation
         elif right:
@@ -41,10 +41,10 @@ class Car:
     def draw(self):
         self.image.rotate_draw(self.rotation_angle, player_x, player_y, 80, 50)
 
-PLAYER_CAR = Car(50, 1)
+PLAYER_CAR = Car(50, 0.05)
 
 def move_event():
-    global idle, move, dir, dir_y, PLAYER_CAR
+    global idle, move, dir, dir_y, PLAYER_CAR, left, right
 
     events = get_events()
     for event in events:
@@ -54,12 +54,12 @@ def move_event():
             if event.key == SDLK_a:
                 idle = False
                 move = True
-                PLAYER_CAR.rotate(True, False)
+                left, right = True, False
                 dir -= 1
             elif event.key == SDLK_d:
                 idle = False
                 move = True
-                PLAYER_CAR.rotate(False, True)
+                left, right = False, True
                 dir += 1
             elif event.key == SDLK_w:
                 idle = False
@@ -73,12 +73,12 @@ def move_event():
             if event.key == SDLK_a:
                 idle = True
                 move = False
-                PLAYER_CAR.rotate(False, False)
+                left, right = False, False
                 dir += 1
             elif event.key == SDLK_d:
                 idle = True
                 move = False
-                PLAYER_CAR.rotate(False, False)
+                left, right = False, False
                 dir -= 1
             elif event.key == SDLK_w:
                 idle = True
@@ -97,9 +97,10 @@ while(True):
     ui_1st.draw_now(80, HEIGHT - 50)
     ui_lap.draw_now(250, HEIGHT - 50)
     ui_lap_0.draw_now(360, HEIGHT - 50)
-    #player.draw_now(player_x, player_y, 80, 50)  # 원본 크기 변경하여 적용
     PLAYER_CAR.draw()
+    PLAYER_CAR.rotate()
     player_x += dir * 3
     player_y += dir_y * 3
     update_canvas()
     move_event()
+    delay(0.01)
