@@ -1,4 +1,5 @@
 from pico2d import *
+import math
 import sdl2
 
 WIDTH, HEIGHT = 1280, 720
@@ -29,8 +30,8 @@ class Car:
         self.image = self.Image_player
         self.speed = 0
         self.speed_limit = speed_limit
-        self.rotation_angle = 0
-        self.rotation = rotation
+        self.rotation_angle = math.radians(-90)
+        self.rotation = math.radians(rotation)
 
     def rotate(self):
         if left:
@@ -41,7 +42,15 @@ class Car:
     def draw(self):
         self.image.rotate_draw(self.rotation_angle, player_x, player_y, 80, 50)
 
-PLAYER_CAR = Car(50, 0.05)
+    def update(self):
+        if move:
+            if self.speed < self.speed_limit:
+                self.speed += 0.1
+        else:
+            if self.speed > 0:
+                self.speed -= 0.1
+
+PLAYER_CAR = Car(10, 2)
 
 def move_event():
     global idle, move, dir, dir_y, PLAYER_CAR, left, right
@@ -99,8 +108,9 @@ while(True):
     ui_lap_0.draw_now(360, HEIGHT - 50)
     PLAYER_CAR.draw()
     PLAYER_CAR.rotate()
-    player_x += dir * 3
-    player_y += dir_y * 3
+    PLAYER_CAR.update()
+    player_x += dir * PLAYER_CAR.speed
+    player_y += dir_y * PLAYER_CAR.speed
     update_canvas()
     move_event()
     delay(0.01)
