@@ -18,7 +18,7 @@ ui_lap_0 = load_image('UI_Lap0.png')
 ui_lap_1 = load_image('UI_Lap1.png')
 ui_lap_2 = load_image('UI_Lap2.png')
 
-idle, move = True, False
+idle, accel_push, accel_idle = True, False, True
 left, right = False, False
 dir, dir_y = 0,0
 player_x, player_y = WIDTH//2, HEIGHT//2
@@ -32,6 +32,8 @@ class Car:
         self.speed_limit = speed_limit
         self.rotation_angle = math.radians(-90)
         self.rotation = math.radians(rotation)
+        self.break_push = False
+        self.backward = False
 
     def rotate(self):
         if left:
@@ -43,61 +45,78 @@ class Car:
         self.image.rotate_draw(self.rotation_angle, player_x, player_y, 80, 50)
 
     def update(self):
-        if move:
+        if accel_push:
+            self.backward = False
             if self.speed < self.speed_limit:
                 self.speed += 0.1
-        else:
+        elif accel_idle:
+            if not self.break_push:
+                if not self.backward:
+                    if self.speed > 0:
+                        self.speed -= 0.1
+        elif self.break_push:
             if self.speed > 0:
-                self.speed -= 0.1
+                self.speed -= 0.2
+            else:
+                self.backward = True
+        elif self.backward:
+            pass
 
-PLAYER_CAR = Car(10, 2)
+PLAYER_CAR = Car(10, 1)
 
 def move_event():
-    global idle, move, dir, dir_y, PLAYER_CAR, left, right
+    global idle, accel_push, accel_idle, dir, dir_y, PLAYER_CAR, left, right
 
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:
-            move = False
+            accel_push = False
         elif event.type == SDL_KEYDOWN:
             if event.key == SDLK_a:
                 idle = False
-                move = True
+                accel_push = False
+                accel_idle = False
                 left, right = True, False
                 dir -= 1
             elif event.key == SDLK_d:
                 idle = False
-                move = True
+                accel_push = False
+                accel_idle = False
                 left, right = False, True
                 dir += 1
             elif event.key == SDLK_w:
                 idle = False
-                move = True
+                accel_push = True
+                accel_idle = False
                 dir_y += 1
             elif event.key == SDLK_s:
                 idle = False
-                move = True
-                dir_y -= 1
+                accel_push = False
+                #accel_idle = True
+                PLAYER_CAR.break_push = True
+
         elif event.type == SDL_KEYUP:
             if event.key == SDLK_a:
                 idle = True
-                move = False
+                accel_push = False
+                accel_idle = True
                 left, right = False, False
-                dir += 1
+                dir = 0
             elif event.key == SDLK_d:
                 idle = True
-                move = False
+                accel_push = False
+                accel_idle = True
                 left, right = False, False
-                dir -= 1
+                dir = 0
             elif event.key == SDLK_w:
                 idle = True
-                move = False
-                dir_y -= 1
+                accel_push = False
+                accel_idle = True
             elif event.key == SDLK_s:
                 idle = True
-                move = False
-                dir_y += 1
-
+                accel_push = False
+                #accel_idle = False
+                PLAYER_CAR.break_push = False
 
 while(True):
     clear_canvas()
