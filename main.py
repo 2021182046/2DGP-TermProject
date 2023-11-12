@@ -27,6 +27,10 @@ class Car:
 
     def __init__(self, speed_limit, rotation): #속도, 각도
         self.image = self.Image_player
+
+        self.image_center_x, self.image_center_y = 40, 25
+        self.rotation_center_x, self.rotation_center_y = 40, 10
+
         self.speed = 0
         self.speed_limit = speed_limit
         self.image_rotation_angle = math.radians(-90)
@@ -44,7 +48,10 @@ class Car:
             self.image_rotation_angle -= self.rotation * 0.02
 
     def draw(self):
-        self.image.rotate_draw(self.image_rotation_angle, self.x, self.y, 80, 50)
+        self.image.clip_composite_draw(0, 0, 1280, 720, self.image_rotation_angle, '',
+                                       self.x - self.rotation_center_x,
+                                       self.y - self.rotation_center_y,
+                                       80, 50)
 
     def move_front(self):
         self.speed = min(self.speed + self.accel, self.speed_limit)
