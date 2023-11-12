@@ -18,10 +18,9 @@ ui_lap_0 = load_image('UI_Lap0.png')
 ui_lap_1 = load_image('UI_Lap1.png')
 ui_lap_2 = load_image('UI_Lap2.png')
 
-idle, accel_push, accel_idle = True, False, True
-left, right = False, False
-dir, dir_y = 0,0
-player_x, player_y = WIDTH//2, HEIGHT//2
+game = True
+left, right, front = False, False, False
+move = False
 
 class Car:
     Image_player = player
@@ -30,95 +29,84 @@ class Car:
         self.image = self.Image_player
         self.speed = 0
         self.speed_limit = speed_limit
+        self.image_rotation_angle = math.radians(-90)
         self.rotation_angle = math.radians(-90)
-        self.rotation = math.radians(rotation)
-        self.break_push = False
-        self.backward = False
+        self.rotation = rotation
+        self.x, self.y = 640, 360
+        self.accel = 0.1
 
     def rotate(self):
         if left:
             self.rotation_angle += self.rotation
+            self.image_rotation_angle += self.rotation * 0.02
         elif right:
             self.rotation_angle -= self.rotation
+            self.image_rotation_angle -= self.rotation * 0.02
 
     def draw(self):
-        self.image.rotate_draw(self.rotation_angle, player_x, player_y, 80, 50)
+        self.image.rotate_draw(self.image_rotation_angle, self.x, self.y, 80, 50)
+
+    def move_front(self):
+        self.speed = min(self.speed + self.accel, self.speed_limit)
+        self.move()
+
+    def move(self):  # 현재 속도/회전 각도에 따른 수직 수평거리 계산, 위치 갱신
+        radians = math.radians(self.rotation_angle)
+
+        horizontal = math.sin(radians) * self.speed
+        vertical = math.cos(radians) * self.speed
+
+        self.x -= horizontal
+        self.y += vertical
+
+    def move_slowdown(self):
+        self.speed = max(self.speed - self.accel / 2, 0)
+        self.move()
 
     def update(self):
-        if accel_push:
-            self.backward = False
-            if self.speed < self.speed_limit:
-                self.speed += 0.1
-        elif accel_idle:
-            if not self.break_push:
-                if not self.backward:
-                    if self.speed > 0:
-                        self.speed -= 0.1
-        elif self.break_push:
-            if self.speed > 0:
-                self.speed -= 0.2
-            else:
-                self.backward = True
-        elif self.backward:
-            pass
+        self.rotate()
+        if front:
+            self.move_front()
+        if not move:
+            PLAYER_CAR.move_slowdown()
 
-PLAYER_CAR = Car(10, 1)
+
+PLAYER_CAR = Car(5, 1)
+
 
 def move_event():
-    global idle, accel_push, accel_idle, dir, dir_y, PLAYER_CAR, left, right
+    global game, PLAYER_CAR, left, right, front, move
 
     events = get_events()
     for event in events:
         if event.type == SDL_QUIT:
-            accel_push = False
+            game = False
         elif event.type == SDL_KEYDOWN:
             if event.key == SDLK_a:
-                idle = False
-                accel_push = False
-                accel_idle = False
-                left, right = True, False
-                dir -= 1
+                left = True
+                right = False
             elif event.key == SDLK_d:
-                idle = False
-                accel_push = False
-                accel_idle = False
-                left, right = False, True
-                dir += 1
+                left = False
+                right = True
             elif event.key == SDLK_w:
-                idle = False
-                accel_push = True
-                accel_idle = False
-                dir_y += 1
+                front = True
+                move = True
             elif event.key == SDLK_s:
-                idle = False
-                accel_push = False
-                #accel_idle = True
-                PLAYER_CAR.break_push = True
+                pass
 
         elif event.type == SDL_KEYUP:
             if event.key == SDLK_a:
-                idle = True
-                accel_push = False
-                accel_idle = True
-                left, right = False, False
-                dir = 0
+                left = False
             elif event.key == SDLK_d:
-                idle = True
-                accel_push = False
-                accel_idle = True
-                left, right = False, False
-                dir = 0
+                right = False
             elif event.key == SDLK_w:
-                idle = True
-                accel_push = False
-                accel_idle = True
+                front = False
+                move = False
             elif event.key == SDLK_s:
-                idle = True
-                accel_push = False
-                #accel_idle = False
-                PLAYER_CAR.break_push = False
+                pass
 
-while(True):
+
+while(game):
     clear_canvas()
     map.draw_now(WIDTH//2, HEIGHT//2)
     ui_main.draw_now(WIDTH // 2, HEIGHT // 2)
@@ -126,10 +114,7 @@ while(True):
     ui_lap.draw_now(250, HEIGHT - 50)
     ui_lap_0.draw_now(360, HEIGHT - 50)
     PLAYER_CAR.draw()
-    PLAYER_CAR.rotate()
     PLAYER_CAR.update()
-    player_x += dir * PLAYER_CAR.speed
-    player_y += dir_y * PLAYER_CAR.speed
-    update_canvas()
     move_event()
+    update_canvas()
     delay(0.01)
