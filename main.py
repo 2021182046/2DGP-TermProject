@@ -15,10 +15,11 @@ ui_lap_1 = load_image('UI_Lap1.png')
 ui_lap_2 = load_image('UI_Lap2.png')
 
 font = load_font('ENCR10B.TTF', 30)
+boost_font = load_font('ENCR10B.TTF', 15)
 start_time = get_time()
 
 game = True
-left, right, front, back = False, False, False, False
+left, right, front, back, boost = False, False, False, False, False
 move = False
 
 class Map:
@@ -81,6 +82,8 @@ class Car:
         self.rotation = rotation
         self.x, self.y = 170, 240
         self.accel = 0.1
+        self.boost_speed_limit = 10 # 부스터 최고속도
+        self.boost_value = 100
 
 
     def rotate(self):
@@ -95,10 +98,15 @@ class Car:
     def draw(self):
         self.image.clip_composite_draw(0, 0, 1280, 800, self.image_rotation_angle, '',
                                        self.x, self.y, 70, 50)
-        draw_rectangle(*self.collide_box())
+        boost_font.draw(self.x+10, self.y+10, f'{self.boost_value}')
+        #draw_rectangle(*self.collide_box())
 
     def move_front(self):
-        self.speed = min(self.speed + self.accel, self.speed_limit)
+        if boost and self.boost_value > 0:
+            self.speed = min(self.speed + self.accel*2, self.boost_speed_limit)
+            self.boost_value -= 1
+        else:
+            self.speed = min(self.speed + self.accel, self.speed_limit)
         self.move()
 
     def move_back(self):
@@ -180,7 +188,7 @@ def handle_collisions(): # 충돌 그룹의 충돌 후 동작
 
 
 def move_event():
-    global game, PLAYER_CAR, left, right, front, back, move
+    global game, PLAYER_CAR, left, right, front, back, boost, move
 
     events = get_events()
     for event in events:
@@ -199,6 +207,8 @@ def move_event():
             elif event.key == SDLK_s:
                 back = True
                 move = True
+            elif event.key == SDLK_LSHIFT:
+                boost = True
 
         elif event.type == SDL_KEYUP:
             if event.key == SDLK_a:
@@ -211,8 +221,10 @@ def move_event():
             elif event.key == SDLK_s:
                 back = False
                 move = False
+            elif event.key == SDLK_LSHIFT:
+                boost = False
 
-PLAYER_CAR = Car(3, 1) # 플레이어 생성
+PLAYER_CAR = Car(7, 1) # 플레이어 생성
 MAP = Map()
 walls = [Collision_wall(0, 0, 40, 600),
          Collision_wall(40, 350, 60, 600),
