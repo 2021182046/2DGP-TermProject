@@ -11,7 +11,6 @@ ui_2nd = load_image('UI_2nd.png')
 ui_3rd = load_image('UI_3rd.png')
 ui_4th = load_image('UI_4th.png')
 ui_lap = load_image('UI_Lap.png')
-ui_lap_0 = load_image('UI_Lap0.png')
 ui_lap_1 = load_image('UI_Lap1.png')
 ui_lap_2 = load_image('UI_Lap2.png')
 
@@ -49,9 +48,26 @@ class Collision_road:
     def handle_collision(self, group, other):
         if group == 'car:road':
             other.speed_limit = 7
-
         else:
             other.speed_limit = 4
+
+class Collision_wall:
+    def __init__(self, left_b, bottom_b, right_b, top_b):
+        self.left_b = left_b
+        self.bottom_b = bottom_b
+        self.right_b = right_b
+        self.top_b = top_b
+
+    def draw(self):
+        draw_rectangle(*self.collide_box())
+
+    def collide_box(self):
+        return self.left_b, self.bottom_b, self.right_b, self.top_b
+
+    def handle_collision(self, group, other):
+        if group == 'car:wall':
+            other.speed = -other.speed / 2
+            other.move()
 
 class Car:
     def __init__(self, speed_limit, rotation): #속도, 각도
@@ -112,15 +128,20 @@ class Car:
             PLAYER_CAR.move_slowdown()
 
     def collide_box(self):
-        return self.x - 20, self.y - 30, self.x + 20, self.y + 30
+        return self.x - 10, self.y - 20, self.x + 10, self.y + 20
 
     def handle_collision(self, group, other):
         if group == 'car:road':
             self.speed_limit = 7
-
         else:
             self.speed_limit = 4
+        if group == 'car:wall':
+            self.speed = -self.speed / 2
+            self.move()
 
+    def wall_bounce(self): # 벽에 부딪히면 부딪히기 전 진행속도의 절반속도로 튕겨져나감
+        self.speed = -self.speed / 2
+        self.move()
 
 def collide(a, b): # 충돌 검사
     left_a, bottom_a, right_a, top_a = a.collide_box()
@@ -153,8 +174,9 @@ def handle_collisions(): # 충돌 그룹의 충돌 후 동작
                     a.handle_collision(group, b)
                     b.handle_collision(group, a)
                     collided = True
-            if not collided:
+            if not collided and group ==  'car:road':
                 a.speed_limit = 4
+
 
 
 def move_event():
@@ -192,8 +214,73 @@ def move_event():
 
 PLAYER_CAR = Car(3, 1) # 플레이어 생성
 MAP = Map()
+walls = [Collision_wall(0, 0, 40, 600),
+         Collision_wall(40, 350, 60, 600),
+         Collision_wall(60, 600, 70, 700),
+         Collision_wall(70, 700, 80, 800),
+         Collision_wall(80, 800, 90, 900),
+         Collision_wall(90, 900, 100, 930),
+         Collision_wall(100, 930, 110, 950),
+         Collision_wall(110, 950, 120, 970),
+         Collision_wall(120, 960, 150, 980),
+         Collision_wall(150, 980, 180, 1000),
+         Collision_wall(180, 1000, 220, 1020),
+         Collision_wall(220, 1010, 350, 1030),
+         Collision_wall(350, 1020, 450, 1040),
+         Collision_wall(450, 1010, 600, 1030),
+         Collision_wall(600, 1000, 720, 1020),
+         Collision_wall(720, 1010, 800, 1030),
+         Collision_wall(800, 1020, 880, 1040),
+         Collision_wall(880, 1030, 960, 1050),
+         Collision_wall(960, 1040, 1100, 1060),
+         Collision_wall(1100, 1050, 1200, 1070),
+         Collision_wall(1200, 1060, 1280, 1070),
+         Collision_wall(1280, 1065, 1360, 1080),
+         Collision_wall(1360, 1080, 1440, 1100),
 
-roads = [Collision_road(100, 50, 200, 500),
+         Collision_wall(210, 0, 250, 200),
+         Collision_wall(220, 200, 260, 400),
+         Collision_wall(230, 400, 270, 500),
+         Collision_wall(250, 500, 270, 550),
+         Collision_wall(260, 550, 270, 600),
+
+         Collision_wall(340, 500, 350, 550),
+         Collision_wall(340, 550, 350, 600),
+         Collision_wall(350, 600, 370, 630),
+         Collision_wall(370, 630, 390, 660),
+         Collision_wall(390, 650, 420, 680),
+         Collision_wall(420, 670, 450, 690),
+         Collision_wall(450, 690, 480, 710),
+         Collision_wall(480, 700, 510, 720),
+         Collision_wall(510, 720, 650, 750),
+         Collision_wall(620, 750, 800, 780),
+         Collision_wall(750, 780, 1000, 800),
+         Collision_wall(900, 800, 1200, 820),
+         Collision_wall(1100, 820, 1400, 840),
+         Collision_wall(1300, 840, 1600, 860),
+         Collision_wall(1500, 860, 1700, 880),
+         Collision_wall(1570, 450, 1590, 700),
+         Collision_wall(1590, 700, 1610, 750),
+         Collision_wall(1610, 750, 1630, 800),
+         Collision_wall(1630, 770, 1650, 850),
+         Collision_wall(1590, 400, 1610, 450),
+         Collision_wall(1610, 350, 1630, 400),
+         Collision_wall(1630, 300, 1650, 350),
+         Collision_wall(1650, 270, 1670, 320),
+         Collision_wall(1670, 250, 1700, 270),
+         Collision_wall(1700, 230, 1730, 250),
+         Collision_wall(1730, 200, 1760, 230),
+         Collision_wall(1760, 170, 1790, 200),
+         Collision_wall(1790, 140, 1820, 170),
+         Collision_wall(1820, 110, 1850, 140),
+         Collision_wall(1850, 80, 1880, 110),
+
+         ]
+for wall in walls:
+    add_collision_pair('car:wall', PLAYER_CAR, wall)
+
+
+roads = [Collision_road(110, 50, 190, 500),
          Collision_road(130, 500, 220, 700),
          Collision_road(160, 720, 400, 780),
          Collision_road(400, 750, 450, 800),
@@ -210,28 +297,35 @@ roads = [Collision_road(100, 50, 200, 500),
          Collision_road(1730, 450, 1770, 550),
          Collision_road(1770, 410, 1810, 510),
          Collision_road(1810, 350, 1850, 450),
-         Collision_road(1850, 300, 1890, 410)]
+         Collision_road(1850, 300, 1890, 410)
+         ]
 for road in roads:
     add_collision_pair('car:road', PLAYER_CAR, road)
+
 
 
 while(game):
     clear_canvas()
     MAP.draw()
     PLAYER_CAR.draw()
-    ui_main.draw_now(WIDTH // 2, HEIGHT // 2)
-    ui_1st.draw_now(80, HEIGHT - 50)
-    ui_lap.draw_now(250, HEIGHT - 50)
-    ui_lap_0.draw_now(360, HEIGHT - 50)
+    ui_main.draw(WIDTH // 2, HEIGHT // 2)
+    ui_1st.draw(80, HEIGHT - 50)
+    ui_lap.draw(250, HEIGHT - 50)
+    ui_lap_1.draw(360, HEIGHT - 50)
 
     current_time = get_time()
     elapsed_time = current_time - start_time
-    font.draw(500, HEIGHT - 65, 'Lap Time : %.3f' % elapsed_time, (255,255,255))
+    minutes = int(elapsed_time/60)
+    second = elapsed_time % 60
+    font.draw(500, HEIGHT - 65, 'Lap Time : %d:%.3f' %(minutes, second), (255,255,255))
 
     PLAYER_CAR.update()
     move_event()
-    for road in roads: # 도로 충돌박스 그리기
-        road.draw()
+    #for road in roads: # 도로 충돌박스 그리기
+        #road.draw()
+
+    #for wall in walls:  # 도로 충돌박스 그리기
+        #wall.draw()
 
     handle_collisions()
 
