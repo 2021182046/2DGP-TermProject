@@ -2,7 +2,7 @@ from pico2d import *
 import math
 import sdl2
 
-WIDTH, HEIGHT = 1280, 720
+WIDTH, HEIGHT = 1920, 1080
 open_canvas(WIDTH, HEIGHT)
 
 map = load_image('map0.png')
@@ -18,8 +18,11 @@ ui_lap_0 = load_image('UI_Lap0.png')
 ui_lap_1 = load_image('UI_Lap1.png')
 ui_lap_2 = load_image('UI_Lap2.png')
 
+font = load_font('ENCR10B.TTF', 30)
+start_time = get_time()
+
 game = True
-left, right, front = False, False, False
+left, right, front, back = False, False, False, False
 move = False
 
 class Car:
@@ -28,33 +31,35 @@ class Car:
     def __init__(self, speed_limit, rotation): #속도, 각도
         self.image = self.Image_player
 
-        self.image_center_x, self.image_center_y = 40, 25
-        self.rotation_center_x, self.rotation_center_y = 40, 10
+        self.rotation_center_x, self.rotation_center_y = 640, 400
 
         self.speed = 0
         self.speed_limit = speed_limit
         self.image_rotation_angle = math.radians(-90)
         self.rotation_angle = math.radians(-90)
         self.rotation = rotation
-        self.x, self.y = 640, 360
+        self.x, self.y = 960, 400
         self.accel = 0.1
 
     def rotate(self):
-        if left:
-            self.rotation_angle += self.rotation
-            self.image_rotation_angle += self.rotation * 0.02
-        elif right:
-            self.rotation_angle -= self.rotation
-            self.image_rotation_angle -= self.rotation * 0.02
+        if self.speed != 0:
+            if left:
+                self.rotation_angle += self.rotation
+                self.image_rotation_angle += self.rotation * 0.0175  # 자연스러운 각도 연동값
+            elif right:
+                self.rotation_angle -= self.rotation
+                self.image_rotation_angle -= self.rotation * 0.0175 # 자연스러운 각도 연동값
 
     def draw(self):
-        self.image.clip_composite_draw(0, 0, 1280, 720, self.image_rotation_angle, '',
-                                       self.x - self.rotation_center_x,
-                                       self.y - self.rotation_center_y,
-                                       80, 50)
+        self.image.clip_composite_draw(0, 0, 1280, 800, self.image_rotation_angle, '',
+                                       self.x, self.y, 80, 50)
 
     def move_front(self):
         self.speed = min(self.speed + self.accel, self.speed_limit)
+        self.move()
+
+    def move_back(self):
+        self.speed = max(self.speed - self.accel, -self.speed_limit / 5)
         self.move()
 
     def move(self):  # 현재 속도/회전 각도에 따른 수직 수평거리 계산, 위치 갱신
@@ -74,15 +79,14 @@ class Car:
         self.rotate()
         if front:
             self.move_front()
+        elif back:
+            self.move_back()
         if not move:
             PLAYER_CAR.move_slowdown()
 
 
-PLAYER_CAR = Car(5, 1)
-
-
 def move_event():
-    global game, PLAYER_CAR, left, right, front, move
+    global game, PLAYER_CAR, left, right, front, back, move
 
     events = get_events()
     for event in events:
@@ -99,7 +103,8 @@ def move_event():
                 front = True
                 move = True
             elif event.key == SDLK_s:
-                pass
+                back = True
+                move = True
 
         elif event.type == SDL_KEYUP:
             if event.key == SDLK_a:
@@ -110,8 +115,10 @@ def move_event():
                 front = False
                 move = False
             elif event.key == SDLK_s:
-                pass
+                back = False
+                move = False
 
+PLAYER_CAR = Car(5, 1) # 플레이어 생성
 
 while(game):
     clear_canvas()
@@ -120,6 +127,11 @@ while(game):
     ui_1st.draw_now(80, HEIGHT - 50)
     ui_lap.draw_now(250, HEIGHT - 50)
     ui_lap_0.draw_now(360, HEIGHT - 50)
+
+    current_time = get_time()
+    elapsed_time = current_time - start_time
+    font.draw(500, HEIGHT - 65, 'Lap Time : %.3f' % elapsed_time, (255,255,255))
+
     PLAYER_CAR.draw()
     PLAYER_CAR.update()
     move_event()
