@@ -5,9 +5,6 @@ from map import Map
 from control_car import move_event
 from ui import load_ui, draw_ui
 from collision import Collision_road, Collision_wall, add_collision_pair, handle_collisions
-import game_framework
-from global_values import WIDTH, HEIGHT, game, left, right, front, back, boost, move
-
 
 def init():
     global PLAYER_CAR, MAP
@@ -24,6 +21,7 @@ def handle_events():
 
 def update():
     PLAYER_CAR.update()
+    MAP.update(PLAYER_CAR.x, PLAYER_CAR.y)
     handle_collisions()
     delay(0.01)
 
