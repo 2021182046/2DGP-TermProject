@@ -11,7 +11,7 @@ def init():
     load_ui()
     PLAYER_CAR = Car(7, 1)
     MAP = Map()
-    create_collision_area(PLAYER_CAR)
+    create_collision_area(PLAYER_CAR, MAP)
 
 def finish():
     close_canvas()

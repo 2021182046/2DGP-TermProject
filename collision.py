@@ -8,6 +8,12 @@ class Collision_road:
         self.right_b = right_b
         self.top_b = top_b
 
+    def update(self, map_x, map_y):
+        self.left_b -= map_x
+        self.right_b -= map_x
+        self.top_b -= map_y
+        self.bottom_b -= map_y
+
     def draw(self):
         draw_rectangle(*self.collide_box())
 
@@ -27,6 +33,12 @@ class Collision_wall:
         self.bottom_b = bottom_b
         self.right_b = right_b
         self.top_b = top_b
+
+    def update(self, map_x, map_y):
+        self.left_b -= map_x
+        self.right_b -= map_x
+        self.top_b -= map_y
+        self.bottom_b -= map_y
 
     def draw(self):
         draw_rectangle(*self.collide_box())

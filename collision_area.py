@@ -1,7 +1,8 @@
 from pico2d import *
 from collision import Collision_road, Collision_wall, add_collision_pair
+from map import Map
 
-def create_collision_area(PLAYER_CAR):
+def create_collision_area(PLAYER_CAR, MAP):
     walls = [Collision_wall(0, 0, 40, 600),
              Collision_wall(40, 350, 60, 600),
              Collision_wall(60, 600, 70, 700),
@@ -61,7 +62,7 @@ def create_collision_area(PLAYER_CAR):
              Collision_wall(1760, 170, 1790, 200),
              Collision_wall(1790, 140, 1820, 170),
              Collision_wall(1820, 110, 1850, 140),
-             Collision_wall(1850, 80, 1880, 110),
+             Collision_wall(1850, 80, 1880, 110)
 
              ]
     for wall in walls:
@@ -88,6 +89,8 @@ def create_collision_area(PLAYER_CAR):
              ]
     for road in roads:
         add_collision_pair('car:road', PLAYER_CAR, road)
+
+    MAP.set_collision_areas(walls, roads)
 
     #for road in roads: # 도로 충돌박스 그리기
         #road.draw()
