@@ -1,5 +1,48 @@
 from pico2d import *
 
+class Collision_line:
+    def __init__(self, left_b, bottom_b, right_b, top_b):
+        self.left_b = left_b
+        self.bottom_b = bottom_b
+        self.right_b = right_b
+        self.top_b = top_b
+    def update(self, map_x, map_y):
+        self.left_b -= map_x
+        self.right_b -= map_x
+        self.top_b -= map_y
+        self.bottom_b -= map_y
+    def draw(self):
+        draw_rectangle(*self.collide_box())
+    def collide_box(self):
+        return self.left_b, self.bottom_b, self.right_b, self.top_b
+    def handle_collision(self, group, other):
+        if group == 'car:line':
+            other.speed_limit = 4
+            if other.lab_middle_count == 1:
+                other.lab_middle_count = 0
+                other.lab_count += 1
+
+class Collision_middle_line:
+    def __init__(self, left_b, bottom_b, right_b, top_b):
+        self.left_b = left_b
+        self.bottom_b = bottom_b
+        self.right_b = right_b
+        self.top_b = top_b
+    def update(self, dx, dy):
+        self.left_b -= dx
+        self.bottom_b -= dy
+        self.right_b -= dx
+        self.top_b -= dy
+    def draw(self):
+        draw_rectangle(*self.collide_box())
+    def collide_box(self):
+        return self.left_b, self.bottom_b, self.right_b, self.top_b
+    def handle_collision(self, group, other):
+        if group == 'car:mid_line':
+            other.speed_limit = 4
+            if other.lab_middle_count == 0:
+                other.lab_middle_count = 1
+
 
 class Collision_road:
     def __init__(self, left_b, bottom_b, right_b, top_b):
@@ -22,9 +65,9 @@ class Collision_road:
 
     def handle_collision(self, group, other):
         if group == 'car:road':
-            other.speed_limit = 7
-        else:
             other.speed_limit = 4
+        else:
+            other.speed_limit = 3
 
 
 class Collision_wall:
@@ -84,4 +127,4 @@ def handle_collisions(): # 충돌 그룹의 충돌 후 동작
                     b.handle_collision(group, a)
                     collided = True
             if not collided and group ==  'car:road':
-                a.speed_limit = 4
+                a.speed_limit = 3

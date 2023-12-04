@@ -4,7 +4,7 @@ from pico2d import *
 
 
 class Car:
-    def __init__(self, speed_limit, rotation): #속도, 각도
+    def __init__(self, speed_limit, rotation, x, y): #속도, 각도
         self.image = load_image('resource/player_car.png')
 
         self.rotation_center_x, self.rotation_center_y = 640, 400
@@ -13,10 +13,13 @@ class Car:
         self.image_rotation_angle = math.radians(-90)
         self.rotation_angle = math.radians(-90)
         self.rotation = rotation
-        self.x, self.y = 170, 240
+        #self.x, self.y = 170, 240
+        self.x, self.y = x, y
         self.accel = 0.1
-        self.boost_speed_limit = 10 # 부스터 최고속도
+        self.boost_speed_limit = 5 # 부스터 최고속도
         self.boost_value = 100
+        self.lab_count = 0
+        self.lab_middle_count = 0
 
 
     def rotate(self):
@@ -56,6 +59,9 @@ class Car:
         self.x -= horizontal
         self.y += vertical
 
+        # self.x = clamp(0, self.x, 4900 - 1920)
+        # self.y = clamp(0, self.y, 2400 - 1080)
+
     def move_slowdown(self):
         self.speed = max(self.speed - self.accel / 2, 0)
         self.move()
@@ -68,18 +74,26 @@ class Car:
             self.move_back()
         if not global_values.move:
             self.move_slowdown()
+        print(self.lab_middle_count)  # 랩 중간체크 테스트
 
     def collide_box(self):
         return self.x - 10, self.y - 20, self.x + 10, self.y + 20
 
     def handle_collision(self, group, other):
         if group == 'car:road':
-            self.speed_limit = 7
+            self.speed_limit = 3
         else:
-            self.speed_limit = 4
+            self.speed_limit = 2
         if group == 'car:wall':
             self.speed = -self.speed / 2
             self.move()
+        if group == 'car:line':
+            if self.lab_middle_count == 1:
+                self.lab_middle_count = 0
+                self.lab_count += 1
+        if group == 'car:mid_line':
+            if self.lab_middle_count == 0:
+                self.lab_middle_count = 1
 
     def wall_bounce(self): # 벽에 부딪히면 부딪히기 전 진행속도의 절반속도로 튕겨져나감
         self.speed = -self.speed / 2
