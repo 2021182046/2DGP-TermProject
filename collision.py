@@ -108,6 +108,8 @@ def collide(a, b): # 충돌 검사
 
 
 collision_pairs = {}
+
+
 def add_collision_pair(group, a, b): # 충돌 그룹 등록
     if group not in collision_pairs:
         print(f'Added new group {group}')
@@ -116,6 +118,7 @@ def add_collision_pair(group, a, b): # 충돌 그룹 등록
         collision_pairs[group][0].append(a)
     if b:
         collision_pairs[group][1].append(b)
+
 
 def handle_collisions(): # 충돌 그룹의 충돌 후 동작
     for group, pairs in collision_pairs.items():

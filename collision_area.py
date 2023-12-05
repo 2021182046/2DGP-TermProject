@@ -1,10 +1,10 @@
 from pico2d import *
 from collision import Collision_line, Collision_middle_line, Collision_road, Collision_wall, add_collision_pair
-from map import Map
 
 roads = []
 walls = []
 lines = []
+
 
 def create_collision_area(PLAYER_CAR, MAP):
     global roads, walls, lines, mid_lines
@@ -100,10 +100,4 @@ def create_collision_area(PLAYER_CAR, MAP):
     for mid_line in mid_lines:
         add_collision_pair('car:mid_line', PLAYER_CAR, mid_line)
 
-
     MAP.set_collision_areas(walls, roads, lines, mid_lines)
-
-    # for road in roads: # 도로 충돌박스 그리기
-    #     road.draw()
-    # for wall in walls:  # 벽 충돌박스 그리기
-    #     wall.draw()

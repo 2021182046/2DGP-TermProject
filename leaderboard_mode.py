@@ -5,6 +5,7 @@ PLAYER_NAME = 'PLAYER 1'
 LAP_TIME = None
 HP = None
 
+
 def init():
     global leaderboard_image, board_font
     leaderboard_image = load_image('resource/leaderboard(1600x900).jpg')
@@ -18,6 +19,7 @@ def handle_events():
             game_framework.quit()
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             game_framework.quit()
+
 
 def update():
     pass

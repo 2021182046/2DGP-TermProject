@@ -35,13 +35,16 @@ def init():
     accel_sound = load_wav('resource/Car_accel.mp3')
     accel_sound.set_volume(15)
 
+
 def finish():
     pass
+
 
 def handle_events():
     global game_state
     if game_state == 'play':
         move_event()
+
 
 def update():
     global game_state, start_time, finish_time
@@ -71,6 +74,7 @@ def update():
             accel_sound.set_volume(0)
             game_framework.change_mode(leaderboard_mode)
     delay(0.01)
+
 
 def draw():
     global game_state

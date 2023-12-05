@@ -52,6 +52,7 @@ def draw_ui(PLAYER_CAR, game_state):
         font.draw(500, HEIGHT - 65, 'Lap Time : %d:%.3f' %(minutes, second), (255,255,255))
         leaderboard_mode.LAP_TIME = elapsed_time
 
+
 def load_main_mode_start_time(start_time): #main_mode에서 시작시간 가져오기
     global mainmode_start_time
     mainmode_start_time = start_time

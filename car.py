@@ -1,4 +1,3 @@
-import math
 import global_values
 from pico2d import *
 
@@ -20,7 +19,6 @@ class Car:
         self.hp_wait_time = 0
         self.lab_count = 0
         self.lab_middle_count = 0
-
 
     def rotate(self):
         if self.speed != 0:
