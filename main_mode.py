@@ -14,7 +14,7 @@ import leaderboard_mode
 
 
 def init():
-    global PLAYER_CAR, MAP, game_state, start_time, finish_time
+    global PLAYER_CAR, MAP, game_state, start_time, finish_time, start_car_sound, start_beep_sound, idle_sound, accel_sound
     load_ui()
     PLAYER_CAR = Car(4, 1, 530, 400)
     MAP = Map()
@@ -23,6 +23,17 @@ def init():
     start_time = get_time()
     ui.load_main_mode_start_time(start_time) # ui에 시작시간 전달
     finish_time = None
+
+    start_car_sound = load_wav('resource/car_start.mp3')
+    start_car_sound.set_volume(5)
+    start_car_sound.play(1)
+    start_beep_sound = load_music('resource/start_beeps.mp3')
+    start_beep_sound.set_volume(5)
+    start_beep_sound.play(1)
+    idle_sound = load_wav('resource/car_idle.mp3')
+    idle_sound.set_volume(0)
+    accel_sound = load_wav('resource/Car_accel.mp3')
+    accel_sound.set_volume(15)
 
 def finish():
     pass
@@ -35,6 +46,15 @@ def handle_events():
 def update():
     global game_state, start_time, finish_time
     current_time = get_time()
+    if global_values.move is False:
+        idle_sound.repeat_play()
+        idle_sound.set_volume(0)
+        accel_sound.set_volume(0)
+    elif global_values.move is True:
+        accel_sound.repeat_play()
+        accel_sound.set_volume(15)
+        idle_sound.set_volume(0)
+
     if game_state == 'start' and current_time - start_time > 2:
         game_state = 'play'
     if game_state == 'play':
@@ -47,6 +67,8 @@ def update():
             finish_time = get_time()
             leaderboard_mode.HP = PLAYER_CAR.hp
         if finish_time is not None and current_time - finish_time > 2:
+            idle_sound.set_volume(0)
+            accel_sound.set_volume(0)
             game_framework.change_mode(leaderboard_mode)
     delay(0.01)
 

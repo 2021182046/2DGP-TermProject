@@ -6,14 +6,12 @@ from pico2d import *
 class Car:
     def __init__(self, speed_limit, rotation, x, y): #속도, 각도
         self.image = load_image('resource/player_car.png')
-
         self.rotation_center_x, self.rotation_center_y = 640, 400
         self.speed = 0
         self.speed_limit = speed_limit
         self.image_rotation_angle = math.radians(-90)
         self.rotation_angle = math.radians(-90)
         self.rotation = rotation
-        #self.x, self.y = 170, 240
         self.x, self.y = x, y
         self.accel = 0.1
         self.boost_speed_limit = 5 # 부스터 최고속도
@@ -62,9 +60,6 @@ class Car:
 
         self.x -= horizontal
         self.y += vertical
-
-        # self.x = clamp(0, self.x, 4900 - 1920)
-        # self.y = clamp(0, self.y, 2400 - 1080)
 
     def move_slowdown(self):
         self.speed = max(self.speed - self.accel / 2, 0)
