@@ -1,4 +1,4 @@
-WIDTH, HEIGHT = 1920, 1080
+WIDTH, HEIGHT = 1600, 900
 game = True
 left = False
 right = False

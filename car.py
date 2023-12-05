@@ -18,6 +18,8 @@ class Car:
         self.accel = 0.1
         self.boost_speed_limit = 5 # 부스터 최고속도
         self.boost_value = 100
+        self.hp = 100
+        self.hp_wait_time = 0
         self.lab_count = 0
         self.lab_middle_count = 0
 
@@ -33,9 +35,11 @@ class Car:
 
     def draw(self):
         boost_font = load_font('resource/ENCR10B.TTF', 15)
+        hp_font = load_font('resource/ENCR10B.TTF', 12)
         self.image.clip_composite_draw(0, 0, 1280, 800, self.image_rotation_angle, '',
                                        self.x, self.y, 70, 50)
         boost_font.draw(self.x+10, self.y+10, f'{self.boost_value}')
+        hp_font.draw(self.x-20, self.y-40, f'HP:{self.hp}')
         #draw_rectangle(*self.collide_box()) # 차 충돌박스 그리기
 
     def move_front(self):
@@ -86,6 +90,9 @@ class Car:
             self.speed_limit = 2
         if group == 'car:wall':
             self.speed = -self.speed / 2
+            if get_time() > self.hp_wait_time:
+                self.hp -= 10
+                self.hp_wait_time = get_time() + 3 #3초 무적시간
             self.move()
         if group == 'car:line':
             if self.lab_middle_count == 1:

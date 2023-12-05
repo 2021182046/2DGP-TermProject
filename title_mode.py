@@ -1,17 +1,15 @@
-from pico2d import load_image, get_events, clear_canvas, update_canvas, get_time
+from pico2d import *
 from sdl2 import SDL_QUIT, SDL_KEYDOWN, SDLK_ESCAPE, SDLK_SPACE
 
 import game_framework
 import main_mode
 
 def init():
-    global image, image2, image3
-    global logo_start_time
+    global image
 
-    image = load_image('resource/title(1920x1080).jpg')
+    image = load_image('resource/title(1600x900).jpg')
     #배경 이미지 출처 : https://www.freepik.com/free-ai-image/shiny-sports-car-driving-illuminated-sports-track-generative-ai_48632269.htm#query=f1%20racing&position=13&from_view=keyword&track=ais&uuid=d73ef0f7-1234-4f00-b83c-3a5f206808cc
     #폰트 : 넥슨 LV1고딕
-    logo_start_time = get_time()
 
 
 def finish():
@@ -32,5 +30,5 @@ def update():
 
 def draw():
     clear_canvas()
-    image.draw(960,540)
+    image.draw(800,450)
     update_canvas()
