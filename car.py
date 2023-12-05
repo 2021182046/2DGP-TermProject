@@ -91,7 +91,7 @@ class Car:
         if group == 'car:wall':
             self.speed = -self.speed / 2
             if get_time() > self.hp_wait_time:
-                self.hp -= 10
+                self.hp -= 20
                 self.hp_wait_time = get_time() + 3 #3초 무적시간
             self.move()
         if group == 'car:line':

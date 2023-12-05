@@ -8,8 +8,8 @@ import title_menu_mode
 def init():
     global image
 
-    image = load_image('resource/title(1600x900).jpg')
-    #배경 이미지 출처 : https://www.freepik.com/free-ai-image/shiny-sports-car-driving-illuminated-sports-track-generative-ai_48632269.htm#query=f1%20racing&position=13&from_view=keyword&track=ais&uuid=d73ef0f7-1234-4f00-b83c-3a5f206808cc
+    image = load_image('resource/hp0_image.jpg')
+    #배경 이미지 출처 : https://www.wallpaperbetter.com/ko/hd-wallpaper-fhgyx/download/2560x1440
     #폰트 : 넥슨 LV1고딕
 
 

@@ -12,7 +12,40 @@ def create_collision_area(PLAYER_CAR, MAP):
              Collision_wall(1610, -350, 1630, 1130),
 
              Collision_wall(260, 1070, 1610, 1100),
-             Collision_wall(260, -390, 1610, -380)
+             Collision_wall(260, -390, 1610, -380),
+
+             # 타이어
+             Collision_wall(1250, 490, 1270, 510),
+             Collision_wall(1270, 480, 1290, 500),
+             Collision_wall(1280, 470, 1310, 490),
+             Collision_wall(1320, 460, 1340, 480),
+             Collision_wall(1340, 450, 1360, 470),
+             Collision_wall(1360, 440, 1380, 460),
+             Collision_wall(1380, 430, 1400, 450),
+             Collision_wall(1410, 420, 1430, 440),
+             Collision_wall(1430, 400, 1450, 430),
+             Collision_wall(1450, 390, 1470, 320),
+
+             Collision_wall(1050, 340, 1070, 360),
+             Collision_wall(1070, 320, 1090, 340),
+             Collision_wall(1090, 310, 1110, 330),
+             Collision_wall(1110, 290, 1130, 310),
+             Collision_wall(1130, 280, 1150, 300),
+             Collision_wall(1150, 270, 1170, 290),
+             Collision_wall(1170, 260, 1190, 280),
+             Collision_wall(1190, 250, 1210, 270),
+             Collision_wall(1210, 240, 1230, 260),
+             Collision_wall(1230, 240, 1250, 260),
+             Collision_wall(1250, 230, 1270, 250),
+
+             Collision_wall(890, -110, 980, -90),
+             Collision_wall(1110, -110, 1180, -90),
+
+             Collision_wall(1010, -130, 1040, -90),
+             Collision_wall(1050, -110, 1070, -90),
+             Collision_wall(1050, -140, 1070, -130),
+             Collision_wall(1030, -150, 1050, -130),
+             Collision_wall(1090, -100, 1110, -80),
              ]
     for wall in walls:
         add_collision_pair('car:wall', PLAYER_CAR, wall)

@@ -1,6 +1,7 @@
 from pico2d import *
 
 import game_framework
+import hp0_mode
 import ui
 from car import Car
 from collision_area import create_collision_area, roads, walls
@@ -40,6 +41,8 @@ def update():
         PLAYER_CAR.update()
         MAP.update(PLAYER_CAR.x, PLAYER_CAR.y, PLAYER_CAR.speed)
         handle_collisions()
+        if PLAYER_CAR.hp == 0:
+            game_framework.change_mode(hp0_mode)
         if PLAYER_CAR.lab_count == 2 and finish_time is None:
             finish_time = get_time()
             leaderboard_mode.HP = PLAYER_CAR.hp
