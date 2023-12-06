@@ -11,9 +11,9 @@ def load_ui():
 
     ui_main = load_image('resource/UI_black(1600x900).png')
     ui_1st = load_image('resource/UI_1st.png')
-    ui_2nd = load_image('resource/UI_2nd.png')
-    ui_3rd = load_image('resource/UI_3rd.png')
-    ui_4th = load_image('resource/UI_4th.png')
+    #ui_2nd = load_image('resource/UI_2nd.png')
+    #ui_3rd = load_image('resource/UI_3rd.png')
+    #ui_4th = load_image('resource/UI_4th.png')
     ui_lap = load_image('resource/UI_Lap.png')
     ui_lap_1 = load_image('resource/UI_Lap1.png')
     ui_lap_2 = load_image('resource/UI_Lap2.png')
